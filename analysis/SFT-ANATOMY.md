@@ -106,8 +106,6 @@ user -> reasoning -> tool_call -> tool_output -> reasoning -> tool_call -> tool_
 
 ## 5. Galutinių atsakymų formatas
 
-Galutiniai modelio atsakymai naudoja:
-
 ### Answer žymas
 
 Atsakymas pateikiamas:
@@ -127,6 +125,8 @@ Trumpiems atsakymams naudojamas:
 ```
 
 formatas.
+
+---
 
 ### Citavimas
 
@@ -179,7 +179,7 @@ Papildomai dataset dokumentacijoje nurodoma, kad galutinė versija buvo išvalyt
 
 ---
 
-# Išvada
+## Išvada
 
 DR-Tulu SFT dataset yra skirtas mokyti kalbos modelius naudoti įrankius atliekant tyrimo užduotis.
 
@@ -192,3 +192,5 @@ Svarbiausi pastebėjimai:
 - Galutiniai atsakymai naudoja citatas, susietas su paieškos rezultatais.
 
 Ši analizė leidžia suprasti dataset struktūrą prieš atliekant tolimesnį fine-tuning duomenų paruošimą.
+
+---
