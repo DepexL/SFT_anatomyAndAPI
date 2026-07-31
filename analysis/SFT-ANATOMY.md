@@ -60,23 +60,23 @@ formatą.
 
 Išanalizavus `tool_call` įrašus nustatyti naudojami argumentai.
 
-| Tool                       | Argumentas       | Tipas | Pavyzdinė reikšmė                                    |
-| google_search              | query            | str   | AMD EPYC LLM inference user feedback Reddit          |
-| google_search              | num              | int   | 10                                                   |
-| google_search              | gl               | str   | us                                                   |
-| google_search              | hl               | str   | en                                                   |
-| google_search              | limit            | int   | 10                                                   |
-| browse_webpage             | query            | str   | https://www.reddit.com/...                           |
-| snippet_search             | query            | str   | CO2 plume detection power plant                      |
-| snippet_search             | limit            | int   | 10                                                   |
-| snippet_search             | year             | str   | 2022-2025                                            |
-| snippet_search             | fieldsOfStudy    | str   | Environmental Science,Engineering                    |
-| snippet_search             | minCitationCount | int   | 300                                                  |
-| snippet_search             | venues           | str   | ICWSM,WWW,TheWebConf                                 |
-| search_papers_by_relevance | query            | str   | Stringency of COVID-19 Containment Response Policies |
-| search_papers_by_relevance | year             | str   | 2020-2025                                            |
-| search_papers_by_relevance | fieldsOfStudy    | str   | Environmental Science,Public Health                  |
-| search_papers_by_relevance | limit            | int   | 5                                                    |
+| Tool                       | Argumentas       | Tipas    | Pavyzdinė reikšmė                                    |
+| google_search              | query            | str      | AMD EPYC LLM inference user feedback Reddit          |
+| google_search              | num              | int      | 10                                                   |
+| google_search              | gl               | str      | us                                                   |
+| google_search              | hl               | str      | en                                                   |
+| google_search              | limit            | int      | 10                                                   |
+| browse_webpage             | query            | str      | https://www.reddit.com/...                           |
+| snippet_search             | query            | str      | CO2 plume detection power plant                      |
+| snippet_search             | limit            | int      | 10                                                   |
+| snippet_search             | year             | str, int | 2022-2025                                            |
+| snippet_search             | fieldsOfStudy    | str      | Environmental Science,Engineering                    |
+| snippet_search             | minCitationCount | int      | 300                                                  |
+| snippet_search             | venues           | str      | ICWSM,WWW,TheWebConf                                 |
+| search_papers_by_relevance | query            | str      | Stringency of COVID-19 Containment Response Policies |
+| search_papers_by_relevance | year             | str, int | 2020-2025                                            |
+| search_papers_by_relevance | fieldsOfStudy    | str      | Environmental Science,Public Health                  |
+| search_papers_by_relevance | limit            | int      | 5                                                    |
 
 ---
 

@@ -14,234 +14,345 @@ df = pd.read_parquet(dataset_path)
 
 
 # 1 Uzd:
-print("\n1 uzduotis\n")
-print("Dataset dydis:")
-print(df.shape)
 
-print("\nTop-level laukai:")
-print(df.columns.tolist())
+def data_showcase(kiekis):
+    print("\n1 uzduotis\n")
+    print("Dataset dydis:")
+    print(df.shape)
+
+    print("\nTop-level laukai:")
+    print(df.columns.tolist())
+
+    print("\nPilni 2 irasu laukai:")
+    for i in range(kiekis):
+        for key, value in df.iloc[i].to_dict().items():
+            if key != "conversations":
+                print(f"{key}: {value}\n")
+
+        for item in df.iloc[i]['conversations']:
+            print(f"ROLE: {item['role']}")
+            print(f"CONTENT: {item['content']}")
+            print("-" * 50)
 
 
-print("\nPilni 2 irasu laukai:")
-for i in range(2):
-
-    for key, value in df.iloc[i].to_dict().items():
-        if key != "conversations":
-            print(f"{key}: {value}\n")
-
-    for item in df.iloc[i]['conversations']:
-        print(f"ROLE: {item['role']}")
-        print(f"CONTENT: {item['content']}")
-        print("-" * 50) 
 
 
 # 2 Uzd:
+def count_tool_calls():
+    print("\n2 uzduotis\n")
 
-print("\n2 uzduotis\n")
+    tool_counts = Counter()
 
-tool_counts = Counter()
+    for conversations in df['conversations']:
+        for item in conversations:
+            if item['role'] == 'tool_call':
+                content = item['content']
 
-for conversations in df['conversations']:
-    for item in conversations:
-        if item['role'] == 'tool_call':
-            content = item['content']
+                # suranda name reikšmę
+                match = re.search(r'"name":\s*"([^"]+)"', content)
 
-            # suranda name reikšmę
-            match = re.search(r'"name":\s*"([^"]+)"', content)
+                if match:
+                    tool_name = match.group(1)
+                    tool_counts[tool_name] += 1
 
-            if match:
-                tool_name = match.group(1)
-                tool_counts[tool_name] += 1
+    print("Naudojami irankiai")
+    for tool, count in tool_counts.most_common():
+        print(f"\n{tool}: {count}")
 
-print("Naudojami irankiai")
-for tool, count in tool_counts.most_common():
-    print(f"\n{tool}: {count}")
 
 
 
 
 # 3 Uzd:
 
-print("\n3 uzduotis\n")
+def detect_type(value):
 
-tools_args = defaultdict(dict)
+    value = value.strip()
 
-for conversations in df['conversations']:
-    for item in conversations:
+    # string
+    if value.startswith('"') and value.endswith('"'):
+        return "str", value.strip('"')
 
-        if item['role'] == 'tool_call':
+    # bool
+    if value.lower() == "true":
+        return "bool", True
 
-            content = item['content']
+    if value.lower() == "false":
+        return "bool", False
 
-            # suranda tool pavadinimą
-            tool_match = re.search(r'"name":\s*"([^"]+)"', content)
+    # null
+    if value.lower() == "null":
+        return "null", None
 
-            if tool_match:
-                tool_name = tool_match.group(1)
+    # int
+    if re.fullmatch(r"-?\d+", value):
+        return "int", int(value)
 
-                # suranda arguments
-                args_match = re.search(r'"arguments":\s*\{(.*?)\}', content, re.DOTALL)
+    # float
+    if re.fullmatch(r"-?\d+\.\d+", value):
+        return "float", float(value)
 
-                if args_match:
-                    args_text = args_match.group(1)
+    # list
+    if value.startswith("[") and value.endswith("]"):
+        return "list", value
 
-                    # suranda argumentus ir reikšmes
-                    args = re.findall(
-                        r'"([^"]+)":\s*("[^"]*"|\d+)',
-                        args_text
+    # dict
+    if value.startswith("{") and value.endswith("}"):
+        return "dict", value
+
+    return "unknown", value
+
+
+
+def extract_tool_arguments():
+
+    print("\n3 uzduotis\n")
+
+
+    tools_args = {}
+
+
+    for conversations in df['conversations']:
+
+        for item in conversations:
+
+
+            if item['role'] == 'tool_call':
+
+                content = item['content']
+
+
+                # Surandame tool pavadinimą
+                tool_match = re.search(
+                    r'"name":\s*"([^"]+)"',
+                    content
+                )
+
+
+                if tool_match:
+
+                    tool_name = tool_match.group(1)
+
+
+                    # Sukuriame vietą tool jei dar nėra
+                    if tool_name not in tools_args:
+                        tools_args[tool_name] = {}
+
+
+                    # Surandame arguments
+                    args_match = re.search(
+                        r'"arguments":\s*\{(.*?)\}',
+                        content,
+                        re.DOTALL
                     )
 
-                    for arg, value in args:
 
-                        value = value.strip('"')
+                    if args_match:
 
-                        if value.isdigit():
-                            value_type = "int"
-                            value = int(value)
-                        else:
-                            value_type = "str"
-
-                        tools_args[tool_name][arg] = {
-                            "type": value_type,
-                            "example": value
-                        }
+                        args_text = args_match.group(1)
 
 
-# Sukuriame DataFrame lentelę
-rows = []
-
-for tool, args in tools_args.items():
-    for arg, info in args.items():
-
-        rows.append({
-            "Tool": tool,
-            "Argumentas": arg,
-            "Tipas": info["type"],
-            "Pavyzdine reiksme": info["example"]
-        })
+                        args = re.findall(
+                            r'"([^"]+)":\s*("(?:[^"\\]|\\.)*"|\[[^\]]*\]|\{[^\}]*\}|true|false|null|-?\d+\.\d+|-?\d+)',
+                            args_text
+                        )
 
 
-table = pd.DataFrame(rows)
+                        for arg, value in args:
 
-print(table.to_string(index=False)) 
+
+                            value_type, value = detect_type(value)
+
+
+                            # Sukuriame vietą argumentui
+                            if arg not in tools_args[tool_name]:
+                                tools_args[tool_name][arg] = []
+
+
+                            # Pridedame rastą tipą ir pavyzdį
+                            tools_args[tool_name][arg].append({
+                                "type": value_type,
+                                "example": value
+                            })
+
+
+    # Sukuriame lentelę
+    rows = []
+
+
+    for tool, args in tools_args.items():
+
+        for arg, values in args.items():
+
+            types = []
+            examples = []
+
+
+            for item in values:
+
+                if item["type"] not in types:
+                    types.append(item["type"])
+
+                if len(examples) < 2:
+                    examples.append(item["example"])
+
+
+            rows.append({
+                "Tool": tool,
+                "Argumentas": arg,
+                "Tipai": ", ".join(types),
+                "Pavyzdziai": examples
+            })
+
+
+    table = pd.DataFrame(rows)
+
+
+    print(table.to_string(index=False))
+
+
+
 
 
 
 # 4 Uzd:
 
-print("\n4 uzduotis\n")
+def analyze_tool_calls():
+    print("\n4 uzduotis\n")
 
 
-tool_calls_per = []
+    tool_calls_per = []
 
-for conversations in df['conversations']:
+    for conversations in df['conversations']:
 
-    count = 0
+        count = 0
 
-    for item in conversations:
-        if item['role'] == 'tool_call':
-            count += 1
+        for item in conversations:
+            if item['role'] == 'tool_call':
+                count += 1
 
-    tool_calls_per.append(count)
-
-
-print("Trajektoriju statistika:")
-print(f"Min: {min(tool_calls_per)}")
-print(f"Max: {max(tool_calls_per)}")
-print(f"Mediana: {statistics.median(tool_calls_per)}")
-
-# Vieno ir daugiažingsnių grandinių skaičius
-
-single_step = 0
-multi_step = 0
-
-for x in tool_calls_per:
-    if x == 1:
-        single_step += 1
-
-for x in tool_calls_per:
-    if x > 1:
-        multi_step += 1
+        tool_calls_per.append(count)
 
 
-print("\nGrandiniu iskvietimai:")
-print(f"Vienas irankio iskvietimas: {single_step}")
-print(f"Daugiaizngsnes grandines (>1): {multi_step}")
+    print("Trajektoriju statistika:")
+    print(f"Min: {min(tool_calls_per)}")
+    print(f"Max: {max(tool_calls_per)}")
+    print(f"Mediana: {statistics.median(tool_calls_per)}")
+
+    # Vieno ir daugiažingsnių grandinių skaičius
+
+    single_step = 0
+    multi_step = 0
+
+    for x in tool_calls_per:
+        if x == 1:
+            single_step += 1
+
+    for x in tool_calls_per:
+        if x > 1:
+            multi_step += 1
+
+
+    print("\nGrandiniu iskvietimai:")
+    print(f"Vienas irankio iskvietimas: {single_step}")
+    print(f"Daugiaizngsnes grandines (>1): {multi_step}")
+
+
 
 
 # 5 Uzd:
+def analyze_answers():
+    print("\n5 uzduotis\n")
 
-print("\n5 uzduotis - galutiniai atsakymai formuojami su <answer></answer> tagais. "
-      "Trumpiems atsakymams naudojamas \\boxed{} formatas, "
-      "o is irankiu gauta informacija cituojama inline naudojant <cite id=\"SNIPPET_ID\">...</cite>.")
+    i = 0
 
-i = 0
+    for conversations in df['conversations']:
+        for item in conversations:
+            if item['role'] == 'answer':
+                i += 1
 
-for conversations in df['conversations']:
-    for item in conversations:
-        if item['role'] == 'answer':
-            i += 1
+                content = item['content']
 
-            content = item['content']
+                if len(content) > 500:
+                    content = content[:998] + "... </answer>"
 
-            if len(content) > 500:
-                content = content[:998] + "... </answer>"
+                print(f"\n{content}")
 
-            print(f"\n{content}")
+                if i >= 2:
+                    return
 
-            if i >= 2:
-                break
-
-    if i >= 2:
-        break
 
 
 # 6 uzd
-print("\n6 uzduotis\n")
 
-broken_json = 0
-empty_answers = 0
-broken_trajectory = 0
+def analyze_broken_trajectories():
+    print("\n6 uzduotis\n")
 
-for conversations in df["conversations"]:
+    broken_json = 0
+    empty_answers = 0
+    broken_trajectory = 0
 
-    has_tool_call = False
-    has_tool_output = False
-    has_answer = False
+    for conversations in df["conversations"]:
 
-    for item in conversations:
+        has_tool_call = False
+        has_tool_output = False
+        has_answer = False
 
-        role = item["role"]
-        content = item["content"]
+        for item in conversations:
 
-        # tikrinam tool_call formatą
-        if role == "tool_call":
-            has_tool_call = True
+            role = item["role"]
+            content = item["content"]
 
-            if not re.search(r'"name"\s*:\s*".+?"', content):
-                broken_json += 1
+            # tikrinam tool_call formatą
+            if role == "tool_call":
+                has_tool_call = True
 
-            if not re.search(r'"arguments"\s*:\s*\{.*\}', content, re.DOTALL):
-                broken_json += 1
+                if not re.search(r'"name"\s*:\s*".+?"', content):
+                    broken_json += 1
 
-
-        # tikrinam atsakymus
-        if role == "answer":
-            has_answer = True
-
-            if not content.strip():
-                empty_answers += 1
+                if not re.search(r'"arguments"\s*:\s*\{.*\}', content, re.DOTALL):
+                    broken_json += 1
 
 
-        if role == "tool_output":
-            has_tool_output = True
+            # tikrinam atsakymus
+            if role == "answer":
+                has_answer = True
+
+                if not content.strip():
+                    empty_answers += 1
 
 
-    # jei yra tool_call, bet nėra rezultato arba atsakymo
-    if has_tool_call and (not has_tool_output or not has_answer):
-        broken_trajectory += 1
+            if role == "tool_output":
+                has_tool_output = True
 
 
-print(f"Luze JSON argumentai: {broken_json}")
-print(f"Tusti atsakymai: {empty_answers}")
-print(f"Nutrukusios trajektorijos: {broken_trajectory}")
+        # jei yra tool_call, bet nėra rezultato arba atsakymo
+        if has_tool_call and (not has_tool_output or not has_answer):
+            broken_trajectory += 1
+
+
+    print(f"Luze JSON argumentai: {broken_json}")
+    print(f"Tusti atsakymai: {empty_answers}")
+    print(f"Nutrukusios trajektorijos: {broken_trajectory}")
+
+
+
+if __name__ == "__main__":
+
+    # 1 uzd
+    data_showcase(2)
+
+    # 2 uzd
+    count_tool_calls()
+
+    # 3 uzd
+    extract_tool_arguments()
+
+    # 4 uzd
+    analyze_tool_calls()
+
+    # 5 uzd
+    analyze_answers()
+
+    # 6 uzd
+    analyze_broken_trajectories()
