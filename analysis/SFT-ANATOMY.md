@@ -14,6 +14,7 @@ Bendras dataset dydis:
 Top-level laukai:
 
 | Laukas           | Aprašymas                             |
+| - | - |
 | id               | Unikalus įrašo identifikatorius       |
 | source_id        | Originalaus šaltinio identifikatorius |
 | question         | Pradinė vartotojo užklausa            |
@@ -39,6 +40,7 @@ Vienas įrašas susideda iš kelių pokalbio žingsnių:
 Dataset naudojami įrankiai:
 
 | Įrankis                    | Iškvietimų kiekis |
+| - | - |
 | google_search              | 17277             |
 | browse_webpage             | 3687              |
 | snippet_search             | 21367             |
@@ -61,6 +63,7 @@ formatą.
 Išanalizavus `tool_call` įrašus nustatyti naudojami argumentai.
 
 | Tool                       | Argumentas       | Tipas    | Pavyzdinė reikšmė                                    |
+| - | - | - | - |
 | google_search              | query            | str      | AMD EPYC LLM inference user feedback Reddit          |
 | google_search              | num              | int      | 10                                                   |
 | google_search              | gl               | str      | us                                                   |
@@ -87,6 +90,7 @@ Kiekvienam pavyzdžiui buvo suskaičiuotas `tool_call` kiekis.
 Rezultatai:
 
 | Metodas    | Reikšmė |
+| - | - |
 | Minimumas  | 0       |
 | Maksimumas | 63      |
 | Mediana    | 3.0     |
@@ -94,6 +98,7 @@ Rezultatai:
 Grandinių tipai:
 
 | Tipas                                 | Kiekis |
+| - | - |
 | Vienas įrankio iškvietimas            | 848    |
 | Daugiažingsnė grandinė (>1 tool_call) | 11015  |
 
@@ -165,6 +170,7 @@ Citatos nurodo konkrečius paieškos rezultatų snippet ID.
 Buvo tikrinamos galimos dataset problemos:
 
 | Tikrinimas                | Kiekis |
+| - | - |
 | Lūžę JSON argumentai      | 0      |
 | Tušti atsakymai           | 0      |
 | Nutrūkusios trajektorijos | 0      |
