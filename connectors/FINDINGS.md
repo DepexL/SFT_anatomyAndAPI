@@ -32,6 +32,7 @@ Taip pat aiškūs šuoliai buvo matomi Nvidia, Donald Trump ir Grand Theft Auto 
 Pavyzdys (2026 FIFA World Cup)
 
 | Laikas     | Peržiūros |
+| - | - |
 | 2025-07-01 | 28127     |
 | 2025-07-31 | 22510     |
 | 2025-08-30 | 25730     |
@@ -62,6 +63,7 @@ Pavyzdys (2026 FIFA World Cup)
 Pavyzdys (Piano)
 
 | Laikas     | Peržiūros |
+| - | - |
 | 2025-07-01 | 1625      |
 | 2025-07-31 | 1211      |
 | 2025-08-30 | 1280      |
@@ -135,6 +137,7 @@ Iš Firebase API gaunami:
 Pavyzdys
 
 | Pavadinimas | Taškai | Komentarai | Laikas                  | URL                                                                           |
+| - | - | - | - | - |
 | KOReader    | 46     | 8          | 2026-07-29 14:05:08 UTC | https://enklypesalt.com/posts/context-collapse-part3-ai-worming-through-word/ |
 
 Iš Algolia API galima atlikti paiešką pagal raktažodžius.
@@ -156,6 +159,7 @@ Tai leidžia stebėti, kokios temos pradeda populiarėti Hacker News bendruomen�
 Pavyzdys
 
 | Pavadinimas                                                                     | Taškai | Komentarai | Laikas              |
+| - | - | - | - |
 | Unpacking Open Source AI: Toward a Framework for Openness in Foundation Models  | 2      | 0          | 2026-07-29 10:24:42 |
 | New York school pauses plan to deploy humanlike AI robot teacher after backlash | 5      | 0          | 2026-07-28 22:15:02 |
 | Artificial Intelligence Is Artificial Thinking                                  | 2      | 0          | 2026-07-28 19:16:03 |
@@ -197,6 +201,7 @@ Wikipedia Pageviews duomenyse matomas dar ryškesnis pokytis. Iki 2026 m. geguž
 Pavyzdys Hacker News
 
 | Pavadinimas                                                                      | Taškai | Komentarai | Laikas               |
+| - | - | - | - |
 | FIFA World Cup-A Technological Revolution and New Standard for Live Broadcasting | 2      | 1          | 2026-07-20T20:32:18Z | 
 | How to Watch the 2026 FIFA World Cup Finals: Spain vs. Argentina                 | 2      | 0          | 2026-07-19T11:02:34Z | 
 | FIFA World Cup 2026 Data Portraits                                               | 37     | 14         | 2026-07-16T22:21:59Z | 
@@ -239,6 +244,7 @@ Pavyzdys Hacker News
 Pavyzdys Wikipedia pageviews
 
 | Laikas     | Peržiūros |
+| - | - |
 | 2025-07-01 | 28127     |
 | 2025-07-31 | 22510     |
 | 2025-08-30 | 25730     |
